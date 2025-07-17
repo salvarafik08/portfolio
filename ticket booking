@@ -1,0 +1,70 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# Sample data
+movies = {
+    "Theatre A - Kallakurichi": ["Jailer", "Leo", "Master"],
+    "Theatre B - Kallakurichi": ["Beast", "Thunivu", "Varisu"]
+}
+slots = ["10:00 AM", "1:00 PM", "4:00 PM", "7:00 PM"]
+seats = [f"S{i}" for i in range(1, 11)]  # 10 seats
+
+# GUI App
+class MovieBookingApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("🎬 Kallakurichi Movie Booking System")
+
+        # Dropdown for theatre
+        tk.Label(root, text="Select Theatre").pack()
+        self.theatre_var = tk.StringVar()
+        self.theatre_menu = tk.OptionMenu(root, self.theatre_var, *movies.keys(), command=self.update_movies)
+        self.theatre_menu.pack()
+
+        # Dropdown for movies
+        tk.Label(root, text="Select Movie").pack()
+        self.movie_var = tk.StringVar()
+        self.movie_menu = tk.OptionMenu(root, self.movie_var, "")
+        self.movie_menu.pack()
+
+        # Time slot
+        tk.Label(root, text="Select Time Slot").pack()
+        self.slot_var = tk.StringVar()
+        self.slot_menu = tk.OptionMenu(root, self.slot_var, *slots)
+        self.slot_menu.pack()
+
+        # Seat selection
+        tk.Label(root, text="Select Seat").pack()
+        self.seat_var = tk.StringVar()
+        self.seat_menu = tk.OptionMenu(root, self.seat_var, *seats)
+        self.seat_menu.pack()
+
+        # Book button
+        tk.Button(root, text="Book Ticket", command=self.book_ticket, bg="green", fg="white").pack(pady=10)
+
+    def update_movies(self, selected_theatre):
+        movie_list = movies[selected_theatre]
+        self.movie_var.set(movie_list[0])
+        self.movie_menu['menu'].delete(0, 'end')
+        for m in movie_list:
+            self.movie_menu['menu'].add_command(label=m, command=lambda value=m: self.movie_var.set(value))
+
+    def book_ticket(self):
+        if not all([self.theatre_var.get(), self.movie_var.get(), self.slot_var.get(), self.seat_var.get()]):
+            messagebox.showwarning("Incomplete", "Please fill all fields.")
+            return
+        msg = f"""
+🎫 Ticket Confirmed!
+Theatre: {self.theatre_var.get()}
+Movie: {self.movie_var.get()}
+Time: {self.slot_var.get()}
+Seat: {self.seat_var.get()}
+Enjoy your show! 🍿
+"""
+        messagebox.showinfo("Booking Successful", msg)
+
+# Run App
+root = tk.Tk()
+app = MovieBookingApp(root)
+root.geometry("400x400")
+root.mainloop()
